@@ -4,7 +4,7 @@ from redis_om import NotFoundError
 from .. import Host, ApplicationError
 
 
-class AddHostUseCase:
+class UpdateHealthCheck:
     def __init__(self, ip_address):
         self.ip_address = ip_address
 
