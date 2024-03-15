@@ -1,6 +1,6 @@
-from redis_om import EmbeddedJsonModel
+from pydantic import BaseModel, Field
 
 
-class Task(EmbeddedJsonModel):
-    name: str
-    args: str
+class Task(BaseModel):
+    name: str = Field()
+    args: str = Field()
