@@ -1,17 +1,20 @@
 from fastapi import FastAPI
-from dotenv import dotenv_values
 from pymongo import MongoClient
+
+from constants import (
+    MONGO_DB,
+    MONGO_URL
+)
 from routers import ClientRouter
 
-config = dotenv_values(".env")
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 def startup_db():
-    app.mongodb_client = MongoClient(config["MONGO_URL"])
-    app.database = app.mongodb_client[config["MONGO_DB"]]
+    app.mongodb_client = MongoClient(MONGO_URL)
+    app.database = app.mongodb_client[MONGO_DB]
 
 
 @app.on_event("shutdown")
