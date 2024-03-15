@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
+from routers import ClientRouter
+
 app = FastAPI()
 
 
-@app.get("/")
-def show_index():
-    return {"success": True}
+app.include_router(ClientRouter)
