@@ -1,24 +1,24 @@
 from datetime import datetime
 
-from fastapi.exceptions import ValidationException
-from redis_om import NotFoundError
-
+from fastapi.exceptions import ValidationException, HTTPException
+from pymongo.collection import Collection
 from .. import Host
 
 
 class UpdateHealthCheck:
-    def __init__(self, ip_address):
+    def __init__(self, host_collection: Collection, ip_address: str):
         self.ip_address = ip_address
+        self.host_collection = host_collection
 
     def call(self):
         self._validate_data()
 
-        # host = self._find_host(self.ip_address)
+        host = self._find_host()
 
-        # if not host:
-        #     self._add_host()
-        # else:
-        #     self._update_health_check(host)
+        if host is None:
+            self._add_host()
+        else:
+            self._update_health_check()
 
     def _validate_data(self):
         if not self.ip_address:
@@ -26,22 +26,21 @@ class UpdateHealthCheck:
 
     def _find_host(self):
         try:
-            finded_host = Host.get(Host.ip_address == self.ip_address)
-        except NotFoundError:
-            finded_host = None
+            finded_host = self.host_collection.find_one(
+                {"_id": self.ip_address})
+        except Exception:
+            raise HTTPException(status_code=500)
 
         return finded_host
 
     def _add_host(self):
-        Host(**{
-            "ip_address": self.ip_address,
-            "health_check_datetime_string": self.now_datetime_string,
-            "is_active": 1
-        }).save()
+        host_instance = Host(_id=self.ip_address)
+        self.host_collection.insert_one(host_instance.dict())
 
-    def _update_health_check(self, host: Host):
-        host.update(**{
-            "health_check_datetime_string": self.now_datetime_string
+    def _update_health_check(self):
+        self.host_collection.update_one({"_id": self.ip_address}, {
+            "health_check_datetime": datetime.now().isoformat(),
+            "is_active": True
         })
 
     @property
