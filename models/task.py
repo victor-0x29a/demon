@@ -1,6 +1,6 @@
-from redis_om import HashModel
+from redis_om import EmbeddedJsonModel
 
 
-class Task(HashModel):
+class Task(EmbeddedJsonModel):
     name: str
     args: str
