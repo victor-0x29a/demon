@@ -1,5 +1,5 @@
 fastapi
 uvicorn[standard]
-redis-om
-pydantic
+pymongo
+python-dotenv
 flake8
