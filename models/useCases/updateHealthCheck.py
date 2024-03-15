@@ -1,28 +1,28 @@
 from datetime import datetime
+
+from fastapi.exceptions import ValidationException
 from redis_om import NotFoundError
 
-from .. import Host, ApplicationError
+from .. import Host
 
 
 class UpdateHealthCheck:
     def __init__(self, ip_address):
         self.ip_address = ip_address
 
-        self._start()
-
-    def _start(self):
+    def call(self):
         self._validate_data()
 
-        host = self._find_host(self.data.ip_address)
+        # host = self._find_host(self.ip_address)
 
-        if not host:
-            self._add_host()
-        else:
-            self._update_health_check(host)
+        # if not host:
+        #     self._add_host()
+        # else:
+        #     self._update_health_check(host)
 
     def _validate_data(self):
         if not self.ip_address:
-            raise ApplicationError('Ip address is necessary.')
+            raise ValidationException(errors=["The ip address is necessary."])
 
     def _find_host(self):
         try:
