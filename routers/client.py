@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from models import UpdateHealthCheckUseCase
 
@@ -13,6 +13,7 @@ router = APIRouter(prefix="/client")
 
 
 @router.get("/health-check", status_code=204)
-async def update_health_check(ip_address: str):
-    update_use_case = UpdateHealthCheckUseCase(ip_address)
+async def update_health_check(request: Request, ip_address: str):
+    collection = request.app.database['host']
+    update_use_case = UpdateHealthCheckUseCase(collection, ip_address)
     update_use_case.call()
