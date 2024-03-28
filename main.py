@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from pymongo import MongoClient
 
-from constants import (
-    MONGO_DB,
-    MONGO_URL
-)
+from database import get_mongo_connection
 from routers import ClientRouter
 
 
@@ -16,13 +12,12 @@ main_app_lifespan = app.router.lifespan_context
 
 @asynccontextmanager
 async def lifespan_wrapper(app):
-    app.mongodb_client = MongoClient(MONGO_URL)
-    app.database = app.mongodb_client[MONGO_DB]
+    app.database = get_mongo_connection()
 
     async with main_app_lifespan(app) as maybe_state:
         yield maybe_state
 
-    app.mongodb_client.close()
+    app.database.client.close()
 
 app.router.lifespan_context = lifespan_wrapper
 
