@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Query
 from typing import Annotated
 
-from models import UpdateHealthCheckUseCase
+from useCases import UpdateHealthCheckUseCase
 from constants import IPV4_REGEX
 
 

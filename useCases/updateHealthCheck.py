@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi.exceptions import ValidationException, HTTPException
 from pymongo.collection import Collection
-from .. import Host
+from models import Host
 
 
 class UpdateHealthCheck:
