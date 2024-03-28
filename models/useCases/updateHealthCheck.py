@@ -35,7 +35,7 @@ class UpdateHealthCheck:
 
     def _add_host(self):
         host_instance = Host(_id=self.ip_address)
-        self.host_collection.insert_one(host_instance.dict())
+        self.host_collection.insert_one(host_instance.model_dump())
 
     def _update_health_check(self):
         self.host_collection.update_one({"ip_address": self.ip_address}, {
