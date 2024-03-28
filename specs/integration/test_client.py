@@ -5,6 +5,7 @@ from faker import Faker
 from faker.providers import internet
 from fastapi.testclient import TestClient
 from mongomock import MongoClient
+from models import Host
 
 
 client = TestClient(app)
@@ -46,3 +47,24 @@ class TestHealthCheck:
         assert client_generated
 
         assert response.status_code == 204
+
+    def test_should_update_an_exists_client(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        host_instance = Host(_id=ip)
+
+        old_client = mock_client.insert_one(host_instance.model_dump())
+
+        client.get(f"{namespace}/health-check?ip_address={ip}")
+
+        new_client = mock_client.find_one({
+            "ip_address": ip
+        })
+
+        assert old_client["health_check_datetime"] != new_client["health_check_datetime"]
