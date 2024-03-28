@@ -27,7 +27,7 @@ class UpdateHealthCheck:
     def _find_host(self):
         try:
             finded_host = self.host_collection.find_one(
-                {"_id": self.ip_address})
+                {"ip_address": self.ip_address})
         except Exception:
             raise HTTPException(status_code=500)
 
@@ -38,7 +38,7 @@ class UpdateHealthCheck:
         self.host_collection.insert_one(host_instance.dict())
 
     def _update_health_check(self):
-        self.host_collection.update_one({"_id": self.ip_address}, {
+        self.host_collection.update_one({"ip_address": self.ip_address}, {
             "health_check_datetime": datetime.now().isoformat(),
             "is_active": True
         })
