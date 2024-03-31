@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from database import get_mongo_connection
-from routers import ClientRouter
+from routers import ClientRouter, ServerRouter
 
 
 app = FastAPI()
@@ -23,3 +23,4 @@ app.router.lifespan_context = lifespan_wrapper
 
 
 app.include_router(ClientRouter)
+app.include_router(ServerRouter)
