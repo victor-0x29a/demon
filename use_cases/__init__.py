@@ -1,1 +1,1 @@
-from .updateHealthCheck import UpdateHealthCheck as UpdateHealthCheckUseCase
+from .update_health_check import UpdateHealthCheck as UpdateHealthCheckUseCase
