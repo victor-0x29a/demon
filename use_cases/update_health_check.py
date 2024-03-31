@@ -40,6 +40,5 @@ class UpdateHealthCheck:
 
     def _update_health_check(self):
         self.host_collection.update_one({"ip_address": self.ip_address}, {
-            "health_check_datetime": now_to_str(datetime.now()),
-            "is_active": True
+            "health_check_datetime": now_to_str(datetime.now())
         })
