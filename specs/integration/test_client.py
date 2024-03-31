@@ -4,7 +4,7 @@ from faker import Faker
 from faker.providers import internet
 from fastapi.testclient import TestClient
 from mongomock import MongoClient
-from models import Host
+from models import Host, Task
 
 
 client = TestClient(app)
@@ -73,3 +73,66 @@ task_content = {
     "task_name": "foo",
     "task_args": ["bar"]
 }
+
+
+class TestViewTask:
+    def test_should_return_an_empty_task(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        host = Host(_id=ip).model_dump()
+
+        mock_mongodb.insert_one(host)
+
+        request = client.get(f"{namespace}/current-task?ip_address={ip}")
+
+        body = request.json()
+
+        assert request.status_code == 200
+        assert not body["name"]
+        assert not body["args"]
+
+    def test_should_doesnt_send_a_task_data_from_an_unexist_client(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        request = client.get(f"{namespace}/current-task?ip_address={ip}")
+
+        assert request.status_code == 404
+
+    def test_should_remove_a_current_task_when_view(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        task = Task(name="foo", args=["bar"]).model_dump()
+
+        host = Host(_id=ip, task=task).model_dump()
+
+        mock_mongodb.insert_one(host)
+
+        request = client.get(f"{namespace}/current-task?ip_address={ip}")
+
+        body = request.json()
+
+        assert request.status_code == 200
+        assert body["name"]
+        assert body["args"]
+
+        host = mock_mongodb.find_one({"ip_address": ip})
+
+        assert host["task"] == {}
