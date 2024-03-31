@@ -10,3 +10,8 @@ class Host(BaseModel):
     ip_address: str = Field(alias="_id")
     task: Task = Optional[Field(Task)]
     health_check_datetime: str = datetime.now().isoformat()
+
+
+def parse_host(host: Host):
+    host.pop("_id")
+    return host
