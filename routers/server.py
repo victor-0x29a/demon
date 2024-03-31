@@ -2,7 +2,8 @@ from fastapi import APIRouter, Request, Query, Body
 from typing import Annotated
 
 from use_cases import AddTaskUseCase, RemoveTaskUseCase
-from constants import IPV4_REGEX
+from utils import date_in_range, str_to_date
+from constants import IPV4_REGEX, CLIENT_HEALTH_CHECK_LOOP_TIME
 
 
 router = APIRouter(prefix="/server")
@@ -40,3 +41,25 @@ async def remove_task(
     )
 
     remove_task_use_case.call()
+
+
+@router.get("/client/online", status_code=200)
+async def get_clients_online(
+    request: Request
+):
+    collection = request.app.database["host"]
+
+    full_clients = collection.find({})
+
+    clients_online = []
+
+    for client in full_clients:
+        last_health_check_datetime = str_to_date(client["health_check_datetime"])
+
+        if date_in_range(
+            date=last_health_check_datetime,
+            max_minute=CLIENT_HEALTH_CHECK_LOOP_TIME
+        ):
+            clients_online.append(client)
+
+    return clients_online
