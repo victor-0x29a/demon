@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Query, Body
 from typing import Annotated
 
-from use_cases import AddTaskUseCase
+from use_cases import AddTaskUseCase, RemoveTaskUseCase
 from constants import IPV4_REGEX
 
 
@@ -25,3 +25,18 @@ async def add_task(
     )
 
     add_task_use_case.call()
+
+
+@router.post("/remove-task", status_code=204)
+async def remove_task(
+    request: Request,
+    ip_address: Annotated[str, Query(pattern=IPV4_REGEX)]
+):
+    collection = request.app.database["host"]
+
+    remove_task_use_case = RemoveTaskUseCase(
+        host_collection=collection,
+        ip_address=ip_address
+    )
+
+    remove_task_use_case.call()
