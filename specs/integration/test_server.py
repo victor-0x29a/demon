@@ -36,7 +36,7 @@ class TestAddTask:
 
         ip = fake.ipv4()
 
-        request = client.post(f"{namespace}/add-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
 
         assert request.status_code == 422
 
@@ -55,7 +55,7 @@ class TestAddTask:
 
         mock_mongodb.insert_one(host)
 
-        request = client.post(f"{namespace}/add-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
 
         assert request.status_code == 409
 
@@ -72,7 +72,7 @@ class TestAddTask:
 
         mock_mongodb.insert_one(host)
 
-        request = client.post(f"{namespace}/add-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
 
         assert request.status_code == 204
 
@@ -91,7 +91,7 @@ class TestRemoveTask:
 
         ip = fake.ipv4()
 
-        request = client.post(f"{namespace}/remove-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
 
         assert request.status_code == 404
 
@@ -114,7 +114,7 @@ class TestRemoveTask:
 
         assert host["task"] != {}
 
-        request = client.post(f"{namespace}/remove-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
 
         assert request.status_code == 204
 
@@ -139,7 +139,7 @@ class TestRemoveTask:
 
         assert host["task"] == {}
 
-        request = client.post(f"{namespace}/remove-task?ip_address={ip}", json=task_content)
+        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
 
         assert request.status_code == 204
 

@@ -8,7 +8,7 @@ from constants import IPV4_REGEX
 router = APIRouter(prefix="/server")
 
 
-@router.post("/add-task", status_code=204)
+@router.post("/task/add", status_code=204)
 async def add_task(
     request: Request,
     ip_address: Annotated[str, Query(pattern=IPV4_REGEX)],
@@ -27,7 +27,7 @@ async def add_task(
     add_task_use_case.call()
 
 
-@router.post("/remove-task", status_code=204)
+@router.post("/task/remove", status_code=204)
 async def remove_task(
     request: Request,
     ip_address: Annotated[str, Query(pattern=IPV4_REGEX)]
