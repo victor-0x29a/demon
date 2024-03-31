@@ -26,4 +26,7 @@ async def update_health_check(request: Request, ip_address: Annotated[str, Query
 async def get_current_task(request: Request, ip_address: Annotated[str, Query(pattern=IPV4_REGEX)]):
     collection = request.app.database['host']
     view_task_use_case = ViewTaskUseCase(host_collection=collection, ip_address=ip_address)
-    view_task_use_case.call()
+
+    task = view_task_use_case.call()
+
+    return task
