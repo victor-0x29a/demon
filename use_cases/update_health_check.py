@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi.exceptions import ValidationException, HTTPException
 from pymongo.collection import Collection
 from models import Host
