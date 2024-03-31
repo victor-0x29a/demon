@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, Query, Body
 from typing import Annotated
 
 from use_cases import AddTaskUseCase, RemoveTaskUseCase
+from models import parse_host
 from utils import date_in_range, str_to_date
 from constants import IPV4_REGEX, CLIENT_HEALTH_CHECK_LOOP_TIME
 
@@ -60,6 +61,6 @@ async def get_clients_online(
             date=last_health_check_datetime,
             max_minute=CLIENT_HEALTH_CHECK_LOOP_TIME
         ):
-            clients_online.append(client)
+            clients_online.append(parse_host(client))
 
     return clients_online
