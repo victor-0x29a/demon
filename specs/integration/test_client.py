@@ -69,12 +69,6 @@ class TestHealthCheck:
         assert old_client["health_check_datetime"] != new_client["health_check_datetime"]
 
 
-task_content = {
-    "task_name": "foo",
-    "task_args": ["bar"]
-}
-
-
 class TestViewTask:
     def test_should_return_an_empty_task(self, mocker, mock_mongodb):
         mock_client = mocker.patch("fastapi.Request.app")
