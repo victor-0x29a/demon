@@ -26,3 +26,13 @@ def test_should_in_range():
     max_minute_in_range = 2
 
     assert date_in_range(simulated_date, max_minute_in_range)
+
+
+def test_should_not_in_range():
+    now = datetime.now()
+
+    simulated_date = datetime(now.year, now.month, now.day, now.hour, now.minute - 1)
+
+    max_minute_in_range = 1
+
+    assert not date_in_range(simulated_date, max_minute_in_range)
