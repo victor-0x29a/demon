@@ -1,4 +1,4 @@
-<div style="width:100%;text-align:center;">
+<div align="center">
     <img src="./assets/pentagram.png" alt="Devil ghost" width="200" height="200"/>
     <h1>Demon Connection</h1>
 </div>
@@ -9,9 +9,16 @@
 - Docker
 - Python 3.11
 - Pip (Package manager from Python)
+- Make
 
-# Flow
+# Installation
 
-The client have a time where on each `second_delay` seconds, it request the demon to save the health check.
+To install the base: `make install`
 
-After this, should have a range of time to determine if the client is on or off, for example:
+To install the dev requirements: `make install-dev`
+
+# Running
+
+To run: `make dev`
+
+To run all specs: `make test`
