@@ -43,7 +43,7 @@ In X time of loop in your client, keeps calling the route of "/client/health-che
 
 In Y time of loop in your client, also keeps calling the route of "/client/current-task" to get some task if there is.
 
-* "X time" is the var `CLIENT_HEALTH_CHECK_LOOP_TIME` in `.en` file.
+* "X time" is the var `CLIENT_HEALTH_CHECK_LOOP_TIME` in `.en` file. (This configuration is necessary to determine if the client is online or not based on range of time.)
 * "Y time" is not required to configure, because this case stay just in your client.
 
 ## Server routes
