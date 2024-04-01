@@ -5,7 +5,7 @@
 
 # Requirements
 
-- Unix
+- Linux
 - Docker
 - Python 3.11
 - Pip (Package manager from Python)
