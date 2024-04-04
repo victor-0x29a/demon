@@ -1,15 +1,18 @@
 import pytest
 from . import app
 from faker import Faker
+from utils import now_to_str
+from models import Host, Task
+from datetime import datetime
+from mongomock import MongoClient
 from faker.providers import internet
 from fastapi.testclient import TestClient
-from mongomock import MongoClient
-from models import Host, Task
 
 
 client = TestClient(app)
 
 namespace = "/server"
+client_namespace = "/client"
 
 fake = Faker('pt_BR')
 fake.add_provider(internet)
@@ -146,3 +149,77 @@ class TestRemoveTask:
         host = mock_mongodb.find_one({"ip_address": ip})
 
         assert host["task"] == {}
+
+
+class TestShowClientsOnline:
+    def test_should_show_empty_list(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        request = client.get(f"{namespace}/client/online")
+
+        assert request.status_code == 200
+        assert request.json() == []
+
+    def test_should_show_an_online_client(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        client.get(f"{client_namespace}/health-check?ip_address={ip}")
+
+        request = client.get(f"{namespace}/client/online")
+
+        body = request.json()
+
+        assert request.status_code == 200
+        assert len(body) == 1
+
+    def test_should_not_show_an_expired_health_check_datetime(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        ip = fake.ipv4()
+
+        now = datetime.now()
+
+        """ +1 minute before the time setted in .env.test """
+        expired_minute = now.minute - 6
+
+        if expired_minute < 0:
+            expired_minute = expired_minute * -1
+        elif expired_minute > 59:
+            expired_minute = 6
+
+        expired_datetime = datetime(
+            now.year,
+            now.month,
+            now.day,
+            now.hour,
+            expired_minute
+        )
+
+        host = Host(
+            _id=ip,
+            health_check_datetime=now_to_str(expired_datetime)
+        ).model_dump()
+
+        mock_mongodb.insert_one(host)
+
+        request = client.get(f"{namespace}/client/online")
+
+        body = request.json()
+
+        assert request.status_code == 200
+
+        assert len(body) == 0
