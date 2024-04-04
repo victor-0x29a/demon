@@ -2,11 +2,13 @@ import pytest
 from . import app
 from fastapi.testclient import TestClient
 from mongomock import MongoClient
+from utils import generate_token
 
 
 client = TestClient(app)
 
 namespace = "/auth"
+server_namespace = "/server"
 
 
 @pytest.fixture
@@ -41,3 +43,27 @@ class TestAuthentication:
             })
 
             assert response.status_code == 406
+
+
+class TestRequiresLoginDecorator:
+    def test_should_reject_an_unknown_token(self):
+        unknown_token = "unknown"
+
+        response = client.post(
+            f"{server_namespace}/task/add",
+            headers={
+                "Authorization": unknown_token
+            })
+
+        assert response.status_code == 401
+
+    def test_should_approve_a_valid_token(self):
+        valid_token = generate_token()
+
+        response = client.post(
+            f"{server_namespace}/task/add",
+            headers={
+                "Authorization": valid_token
+            })
+
+        assert response.status_code != 401
