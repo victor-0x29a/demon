@@ -2,7 +2,6 @@ import pytest
 from . import app
 from fastapi.testclient import TestClient
 from mongomock import MongoClient
-import hashlib
 
 
 client = TestClient(app)
