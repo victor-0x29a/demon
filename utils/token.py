@@ -18,3 +18,11 @@ def generate_token():
     token = jwt.encode(jwt_payload, SECRET, algorithm=algorithm)
 
     return token
+
+
+def token_is_valid(token, secret):
+    try:
+        jwt.decode(token=token, key=SECRET)
+        return True
+    except Exception:
+        return False
