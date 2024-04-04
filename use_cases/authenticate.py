@@ -28,13 +28,13 @@ class Authenticate:
         if not self.data["user"] or not self.data["pass"]:
             raise HTTPException(422)
 
+    def _hash_string(self, string: str):
+        return hashlib.sha256(string.encode("utf-8")).hexdigest()
+
     def _check_hash_data(self):
-        lawful_obj_hash = hashlib.sha256(str({
-            "user": USER,
-            "pass": PASS
-        }))
+        data_amount = self._hash_string(self.data["user"]) + self._hash_string(self.data["pass"])
 
-        new_auth_obj_hash = hashlib.sha256(str(self.data))
+        hash_data_amount = USER + PASS
 
-        if not lawful_obj_hash == new_auth_obj_hash:
+        if not data_amount == hash_data_amount:
             raise HTTPException(406)
