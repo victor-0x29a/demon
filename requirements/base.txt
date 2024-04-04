@@ -5,3 +5,4 @@ python-dotenv
 flake8
 pydantic
 pytz
+python-jose[cryptography]
