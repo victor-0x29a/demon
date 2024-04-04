@@ -23,10 +23,10 @@
             "args": [
                 "-vv",
                 "--durations=50",
-                "specs/integration/test_client.py::TestTask::test_should_not_add_task_when_doesnt_exist_client"
+                "specs/integration/test_server.py::TestShowClientsOnline::test_should_not_show_an_expired_health_check_datetime"
             ],
             "env": {
-                "FASTAPI_ENV": "testing"
+                "FASTAPI_ENV": "test"
             }
         }
     ]

@@ -11,4 +11,4 @@ dev:
 	uvicorn main:app --reload
 
 test:
-	pytest
+	export FASTAPI_ENV=test && pytest
