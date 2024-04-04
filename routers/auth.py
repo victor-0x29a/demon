@@ -12,7 +12,7 @@ async def gen_authentication(
     username: Annotated[str, Body()],
     password: Annotated[str, Body()]
 ):
-    authentication_use_case = AuthenticateUseCase(username, password)
+    authentication_use_case = AuthenticateUseCase(user=username, pwd=password)
 
     token = authentication_use_case.call()
 
