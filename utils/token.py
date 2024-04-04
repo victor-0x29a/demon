@@ -1,11 +1,11 @@
 import pytz
 from jose import jwt
 from datetime import datetime, timedelta
-from constants import TIMEZONE, SECRET
+from constants import TIMEZONE, SECRET, ALGORITHM
 
 timezone = pytz.timezone(TIMEZONE)
 
-algorithm = "HS256"
+algorithm = ALGORITHM
 
 
 def generate_token():
