@@ -50,4 +50,8 @@ In Y time of loop in your client, also keeps calling the route of "/client/curre
 
 You can add and remove a task from a specified client, and see all clients online based on `CLIENT_HEALTH_CHECK_LOOP_TIME`.
 
-Doesn't have authentication (yet).
+### Authorization
+
+The authorization is unique, your put your username as `USER` and your password as `PASS` in `.env` file, both username and password should is `sha256`.
+
+After this, use the route `/auth/gen` to generate your token, with this, the token have 10min until expire.

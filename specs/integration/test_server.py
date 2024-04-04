@@ -1,7 +1,7 @@
 import pytest
 from . import app
 from faker import Faker
-from utils import now_to_str
+from utils import now_to_str, generate_token
 from models import Host, Task
 from datetime import datetime
 from mongomock import MongoClient
@@ -28,6 +28,10 @@ task_content = {
     "task_args": ["bar"]
 }
 
+default_headers = {
+    "Authorization": generate_token()
+}
+
 
 class TestAddTask:
     def test_should_not_add_task_when_doesnt_exist_client(self, mocker, mock_mongodb):
@@ -39,7 +43,11 @@ class TestAddTask:
 
         ip = fake.ipv4()
 
-        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/add?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 422
 
@@ -58,7 +66,11 @@ class TestAddTask:
 
         mock_mongodb.insert_one(host)
 
-        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/add?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 409
 
@@ -75,7 +87,11 @@ class TestAddTask:
 
         mock_mongodb.insert_one(host)
 
-        request = client.post(f"{namespace}/task/add?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/add?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 204
 
@@ -94,7 +110,11 @@ class TestRemoveTask:
 
         ip = fake.ipv4()
 
-        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/remove?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 404
 
@@ -117,7 +137,11 @@ class TestRemoveTask:
 
         assert host["task"] != {}
 
-        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/remove?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 204
 
@@ -142,7 +166,11 @@ class TestRemoveTask:
 
         assert host["task"] == {}
 
-        request = client.post(f"{namespace}/task/remove?ip_address={ip}", json=task_content)
+        request = client.post(
+            f"{namespace}/task/remove?ip_address={ip}",
+            json=task_content,
+            headers=default_headers
+        )
 
         assert request.status_code == 204
 
@@ -159,7 +187,7 @@ class TestShowClientsOnline:
             "host": mock_mongodb
         }
 
-        request = client.get(f"{namespace}/client/online")
+        request = client.get(f"{namespace}/client/online", headers=default_headers)
 
         assert request.status_code == 200
         assert request.json() == []
@@ -173,9 +201,9 @@ class TestShowClientsOnline:
 
         ip = fake.ipv4()
 
-        client.get(f"{client_namespace}/health-check?ip_address={ip}")
+        client.get(f"{client_namespace}/health-check?ip_address={ip}", headers=default_headers)
 
-        request = client.get(f"{namespace}/client/online")
+        request = client.get(f"{namespace}/client/online", headers=default_headers)
 
         body = request.json()
 
@@ -216,7 +244,7 @@ class TestShowClientsOnline:
 
         mock_mongodb.insert_one(host)
 
-        request = client.get(f"{namespace}/client/online")
+        request = client.get(f"{namespace}/client/online", headers=default_headers)
 
         body = request.json()
 
