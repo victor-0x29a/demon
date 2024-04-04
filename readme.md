@@ -48,4 +48,6 @@ In Y time of loop in your client, also keeps calling the route of "/client/curre
 
 ## Server routes
 
-Actually, you can add and remove a task from a specified client and doesn't have authentication (yet).
+You can add and remove a task from a specified client, and see all clients online based on `CLIENT_HEALTH_CHECK_LOOP_TIME`.
+
+Doesn't have authentication (yet).
