@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, Query, Body
+from fastapi import APIRouter, Request, Query, Body, Depends
 from typing import Annotated
-
+from decorators import requires_login
 from use_cases import AddTaskUseCase, RemoveTaskUseCase
 from models import parse_host
+
 from utils import date_in_range, str_to_date
 from constants import IPV4_REGEX, CLIENT_HEALTH_CHECK_LOOP_TIME
 
@@ -10,7 +11,7 @@ from constants import IPV4_REGEX, CLIENT_HEALTH_CHECK_LOOP_TIME
 router = APIRouter(prefix="/server")
 
 
-@router.post("/task/add", status_code=204)
+@router.post("/task/add", status_code=204, dependencies=[Depends(requires_login)])
 async def add_task(
     request: Request,
     ip_address: Annotated[str, Query(pattern=IPV4_REGEX)],
@@ -29,7 +30,7 @@ async def add_task(
     add_task_use_case.call()
 
 
-@router.post("/task/remove", status_code=204)
+@router.post("/task/remove", status_code=204, dependencies=[Depends(requires_login)])
 async def remove_task(
     request: Request,
     ip_address: Annotated[str, Query(pattern=IPV4_REGEX)]
@@ -44,7 +45,7 @@ async def remove_task(
     remove_task_use_case.call()
 
 
-@router.get("/client/online", status_code=200)
+@router.get("/client/online", status_code=200, dependencies=[Depends(requires_login)])
 async def get_clients_online(
     request: Request
 ):
