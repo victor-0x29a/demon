@@ -1,0 +1,25 @@
+name: Auto Testing
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Pull changes
+      run: git pull
+
+    - name: Install dependencies and build
+      run: |
+        make install
+        make install-dev
+
+    - name: Test
+      run: make test
