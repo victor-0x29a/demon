@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Request, Query, Body, Depends
-from typing import Annotated
+from typing import Annotated, Optional
 from decorators import requires_login
 from use_cases import AddTaskUseCase, RemoveTaskUseCase
 from models import parse_host
 
 from utils import date_in_range, str_to_date
 from constants import IPV4_REGEX, CLIENT_HEALTH_CHECK_LOOP_TIME
+from pymongo.collection import Collection
 
 
 router = APIRouter(prefix="/server")
@@ -43,6 +44,26 @@ async def remove_task(
     )
 
     remove_task_use_case.call()
+
+
+@router.get("/client", status_code=200, dependencies=[Depends(requires_login)])
+async def get_all_clients(
+    request: Request,
+    page: int = 1,
+    per_page: int = 10
+):
+    collection: Collection = request.app.database["host"]
+
+    skip_quantity = 0 if page == 1 else page * per_page
+
+    clients = collection.find({}, skip=skip_quantity, limit=per_page)
+
+    parsed_clients = []
+
+    for client in clients:
+        parsed_clients.append(parse_host(client))
+
+    return parsed_clients
 
 
 @router.get("/client/online", status_code=200, dependencies=[Depends(requires_login)])

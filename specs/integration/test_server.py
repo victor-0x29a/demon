@@ -251,3 +251,94 @@ class TestShowClientsOnline:
         assert request.status_code == 200
 
         assert len(body) == 0
+
+
+class TestShowClients:
+    def test_should_assert(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        request = client.get(f"{namespace}/client", headers=default_headers)
+
+        assert request.status_code == 200
+        assert request.json() == []
+
+        request_with_params = client.get(f"{namespace}/client", headers=default_headers, params={
+            "page": 5,
+            "per_page": 10
+        })
+
+        assert request_with_params.status_code == 200
+        assert request_with_params.json() == []
+
+    def test_should_show_clients(self, mocker, mock_mongodb):
+        mock_client = mocker.patch("fastapi.Request.app")
+
+        mock_client.database = {
+            "host": mock_mongodb
+        }
+
+        def generate_hosts(max=10, return_generated=False):
+            generated = []
+            for _ in range(max):
+                ip = fake.ipv4()
+
+                host = Host(_id=ip).model_dump()
+
+                if return_generated:
+                    generated.append(host)
+
+                mock_mongodb.insert_one(host)
+
+            if return_generated:
+                return generated
+
+        generate_hosts(max=1)
+
+        request = client.get(f"{namespace}/client", headers=default_headers)
+
+        assert request.status_code == 200
+        assert len(request.json()) == 1
+
+        mock_mongodb.delete_many({})
+
+        generate_hosts()
+
+        request = client.get(f"{namespace}/client", headers=default_headers)
+
+        assert request.status_code == 200
+        assert len(request.json()) == 10
+
+        hosts = generate_hosts(max=20, return_generated=True)
+
+        request = client.get(
+            f"{namespace}/client",
+            headers=default_headers,
+            params={
+                "page": 2
+            }
+        )
+
+        body = request.json()
+
+        first_fetched_host_id = body[0]["ip_address"]
+        first_generated_host_id = hosts[0]["ip_address"]
+
+        assert first_generated_host_id != first_fetched_host_id
+
+        assert request.status_code == 200
+        assert len(request.json()) == 10
+
+        request = client.get(
+            f"{namespace}/client",
+            headers=default_headers,
+            params={
+                "per_page": 20
+            }
+        )
+
+        assert request.status_code == 200
+        assert len(request.json()) == 20
