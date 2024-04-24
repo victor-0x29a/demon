@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Query, Body, Depends
-from typing import Annotated, Optional
+from typing import Annotated
 from decorators import requires_login
 from use_cases import AddTaskUseCase, RemoveTaskUseCase
 from models import parse_host
