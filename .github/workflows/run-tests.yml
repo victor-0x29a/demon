@@ -21,5 +21,8 @@ jobs:
         make install
         make install-dev
 
+    - name: Lint
+      run: make lint
+
     - name: Test
       run: make test
