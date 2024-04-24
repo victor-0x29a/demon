@@ -12,3 +12,6 @@ dev:
 
 test:
 	export FASTAPI_ENV=test && pytest
+
+lint:
+	flake8
