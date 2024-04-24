@@ -12,6 +12,12 @@ class ViewTask:
 
         return self.task
 
+    def _get_property(self, dict, property):
+        try:
+            return dict.get(property, None)
+        except Exception:
+            return None
+
     @property
     def task(self):
         task = self.client.get("task")
@@ -20,8 +26,8 @@ class ViewTask:
             self.remove_current_task()
 
         return {
-            "name": task.get("name", None),
-            "args": task.get("args", None)
+            "name": self._get_property(task, "name"),
+            "args": self._get_property(task, "args")
         }
 
     def remove_current_task(self):

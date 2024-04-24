@@ -164,7 +164,7 @@ class TestRemoveTask:
 
         host = mock_mongodb.find_one({"ip_address": ip})
 
-        assert host["task"] == {}
+        assert not host["task"]
 
         request = client.post(
             f"{namespace}/task/remove?ip_address={ip}",
@@ -176,7 +176,7 @@ class TestRemoveTask:
 
         host = mock_mongodb.find_one({"ip_address": ip})
 
-        assert host["task"] == {}
+        assert not host["task"]
 
 
 class TestShowClientsOnline:

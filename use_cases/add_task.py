@@ -47,7 +47,8 @@ class AddTask:
         })
 
     def verify_if_already_have_task(self):
-        return not self.client.get("task") == {}
+        task = self.client.get("task")
+        return not (task == {} or not task)
 
     def verify_if_client_exist(self):
         self.client = self.host_collection.find_one({"ip_address": self.ip_address})
