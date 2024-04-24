@@ -8,7 +8,8 @@ from .task import Task
 
 class Host(BaseModel):
     ip_address: str = Field(alias="_id")
-    task: Task = Optional[Field(Task)]
+    # task = Optional[Field(Task)]
+    task: Optional[Task] = Field(default=None)
     health_check_datetime: str = datetime.now().isoformat()
 
 
