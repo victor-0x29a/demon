@@ -2,3 +2,4 @@ pytest
 httpx
 Faker
 mongomock
+pytest-mock
